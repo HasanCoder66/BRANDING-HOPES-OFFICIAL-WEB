@@ -1,6 +1,8 @@
 import express from 'express'
 import {
-    register
+    register,
+    login,
+    googleAuth
 }
 from '../controllers/authController.js'
 
@@ -17,13 +19,13 @@ authRouter.post('/register', register)
 
 // login middleware and api ↡↓
 //https://localhost:7500/api/auth/login
-// authRouter.post('/login')
+authRouter.post('/login' , login)
 
 
 
 // SignIn with google middleware and api ↡↓
 //https://localhost:7500/api/auth/register
-// authRouter.post('/google')
+authRouter.post('/google' , googleAuth)
 
 
 export default authRouter

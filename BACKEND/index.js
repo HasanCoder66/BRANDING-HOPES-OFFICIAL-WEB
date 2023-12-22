@@ -21,7 +21,7 @@ app.use('/api/auth', authRouter)
 // CONNECT TO BACKEND MONGO DB ====>
 const connectToDb = () => {
 // mongoose.connect(process.dotenv.MONGO_URI)
-mongoose.connect('mongodb+srv://muhammadhasan3866:ib0iYKED119cRTUv@branding-hopes.ac9rdbh.mongodb.net/Branding-Hopes?retryWrites=true&w=majority')
+mongoose.connect(process.env.MONGO_URI)
 .then(()=> {
     console.log('Connect to DB')
 })
