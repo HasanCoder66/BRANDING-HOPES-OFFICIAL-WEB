@@ -1,13 +1,22 @@
-// ALL DEPENDENCIES IMPORTS ====>
+// ALL DEPENDENCIES & FILES ARE IMPORTS HERE ====>
+
 import express from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+import authRouter from './routes/authRoutes.js'
 
 // SERVER LIVE ON THIS PORT LOCALLY
 const PORT = 7500
 
 const app = express()
 dotenv.config()
+
+// MIDDLEWARES TO ROUTE API ON HIS LOCATIONS ====>
+app.use(express.json())
+app.use('/api/auth', authRouter)
+
+
+
 
 // CONNECT TO BACKEND MONGO DB ====>
 const connectToDb = () => {
