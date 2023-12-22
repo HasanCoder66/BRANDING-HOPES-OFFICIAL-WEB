@@ -7,6 +7,7 @@ import Services from './components/Services/Services.jsx'
 import './App.css'
 import Contact from './components/Contact/Contact.jsx'
 import About from './components/About/About.jsx'
+import Package from './components/Package/Package.jsx'
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
 <Routes>
  <Route path='/' element={<Home />} />
  <Route path='/login' element={<Login />} />
+ <Route path='/packages' element={<Package />} />
  <Route path='/signup' element={<Signup />} />
  <Route path='/blog' element={<Blog />} />
  <Route path='/contact' element={<Contact />} />

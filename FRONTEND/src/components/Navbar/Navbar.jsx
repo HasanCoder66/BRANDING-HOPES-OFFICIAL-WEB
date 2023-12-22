@@ -26,6 +26,11 @@ function Navbar({ type }) {
             <a>Services</a>
           </li>
         </Link>
+        <Link to="/packages">
+          <li>
+            <a>Packages</a>
+          </li>
+        </Link>
         <Link to="/blog">
           <li>
             <a>Blog</a>
