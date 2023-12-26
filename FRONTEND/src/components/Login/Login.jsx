@@ -40,6 +40,56 @@ export default function Login() {
         console.log(errorMessage)
       });
   };
+  const loginHandlerWithMongoDb = async (e) => {
+    e.preventDefault();
+
+    console.log(email, "=====>>>>> email");
+    console.log(password, "=====>>>>> password");
+
+    if (email.current.value === "" || password.current.value === "") {
+
+      // console.log("Missing fields")
+      toast.error("Missing fields", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "colored",
+      });
+
+    } else {
+      dispatch(loginPending());
+      const userCredential = {
+        email: email.current.value,
+        password: password.current.value,
+      };
+
+      console.log(userCredential);
+
+      try {
+        const response = await axios.post(
+          `http://localhost:8500/api/auth/login`,
+          userCredential
+        );
+        console.log(response?.data);
+        dispatch(loginSuccess(response?.data));
+        navigate("/");
+        // dispatch(loginSuccess(response?.data))
+        // toast.success("user Login successfully");
+        // setTimeout(() => {
+          // }, 3000);
+          // if(response){
+          // }
+      } catch (error) {
+        if (error) {
+          toast.error(error.message);
+        }
+        console.log(error);
+        dispatch(loginFailed(error.message));
+      }
+    }
+  };
   return (
     <div className="login">
       <div className="loginWrapper">

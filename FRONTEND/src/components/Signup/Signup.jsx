@@ -46,6 +46,97 @@ const navigate = useNavigate()
         // ..
       });
   };
+
+  const signupHandlerWithMongoDb = async (e) => {
+    e.preventDefault();
+
+    // console.log(email);
+    // console.log(password); 
+    // console.log(userName);
+
+    if (
+      email.current.value === "" ||
+      userName.current.value === "" ||
+      password.current.value === "" ||
+      cPassword.current.value === ""
+    ) {
+      // console.log("Missing fields")
+      toast.error("Missing fields", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "colored",
+      });
+    } else if (password.current.value.length < 8) {
+      toast.warning("Password must be at least 8 characters long", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "colored",
+      });
+    } else if (password.current.value !== cPassword.current.value) {
+      toast.warning("Password does not match", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "colored",
+      });
+    } else {
+      console.log("signup handler is working");
+      const userCredential = {
+        userName: userName.current.value,
+        email: email.current.value,
+        password: password.current.value,
+      };
+      // console.log(userCredential);
+      dispatch(signupPending());
+      try {
+        const response = await axios.post(`/api/auth/register`, userCredential);
+        // console.log(response?.data);
+        dispatch(signupSuccess());
+      
+
+        if (response.statusText === "OK") {
+          toast.success("user signup successfully");
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+        }
+      } catch (error) {
+        console.log(error.response.data);
+        dispatch(signupFailed(error.response));
+      }
+    }
+  };
+
+  const signupHandlerWithGoogle = async () => {
+    console.log("signup with google working");
+    try {
+      dispatch(loginPending());
+      const result = await signInWithPopup(auth, provider);
+      console.log(result);
+      console.log(result.user.displayName)
+      console.log(result.user.email)
+      const response = await axios.post("/api/auth/google", {
+        
+        userName: result.user.displayName,
+        email: result.user.email,
+        // img : result.user.photoURL,
+      });
+      
+      console.log(response)
+      dispatch(loginSuccess(response.data));
+      navigate('/')
+    } catch (error) {
+      dispatch(loginFailed());
+    }
+  };
   return (
     <>
     <div className="login">
