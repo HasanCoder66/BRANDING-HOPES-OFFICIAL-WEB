@@ -8,11 +8,12 @@ import Services from "./components/Services/Services.jsx";
 import Contact from "./components/Contact/Contact.jsx";
 import About from "./components/About/About.jsx";
 import Package from "./components/Package/Package.jsx";
-
+import { Provider } from "react-redux";
+import { store } from "./redux/store.js";
 function App() {
   
   return (
-    <>
+    <Provider store={store}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -25,7 +26,7 @@ function App() {
           <Route path="/about" element={<About />} />
         </Routes>
       </BrowserRouter>
-    </>
+    </Provider>
   );
 }
 

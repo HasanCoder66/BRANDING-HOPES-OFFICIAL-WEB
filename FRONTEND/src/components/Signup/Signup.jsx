@@ -1,57 +1,68 @@
 import "./signup.css";
 import { Link } from "react-router-dom";
 import React, { useRef } from "react";
-import { getAuth, createUserWithEmailAndPassword } from "../../firebase/config";
+// import { getAuth, createUserWithEmailAndPassword } from "../../firebase/config";
+// import Footer from "../Footer/Footer";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Footer from "../Footer/Footer";
+import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  signupFailed,
+  signupPending,
+  signupSuccess,
+  loginFailed,
+  loginSuccess,
+  loginPending,
+} from "../../redux/Slices/authSlices.js";
 
 export default function Signup() {
-  const auth = getAuth();
-const navigate = useNavigate()
+  // const auth = getAuth();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const userName = useRef();
   const email = useRef();
   const password = useRef();
   const cPassword = useRef();
 
-  const signupHandler = () => {
-    console.log("signup handler is working");
-    createUserWithEmailAndPassword(
-      auth,
-      email?.current?.value,
-      password?.current?.value
-    )
-      .then((userCredential) => {
-        // Signed up
-        const user = userCredential.user;
-        console.log(user);
+  // const signupHandler = () => {
+  //   console.log("signup handler is working");
+  //   createUserWithEmailAndPassword(
+  //     auth,
+  //     email?.current?.value,
+  //     password?.current?.value
+  //   )
+  //     .then((userCredential) => {
+  //       // Signed up
+  //       const user = userCredential.user;
+  //       console.log(user);
 
-        if (user) {
-          toast.success("user signup successfully");
-          setTimeout(() => {
-            navigate("/login");
-          }, 5000);
-        
-        } else {
-          toast.failed("user not registered");
-        }
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode);
-        console.log(errorMessage);
-        // ..
-      });
-  };
+  //       if (user) {
+  //         toast.success("user signup successfully");
+  //         setTimeout(() => {
+  //           navigate("/login");
+  //         }, 5000);
+
+  //       } else {
+  //         toast.failed("user not registered");
+  //       }
+  //       // ...
+  //     })
+  //     .catch((error) => {
+  //       const errorCode = error.code;
+  //       const errorMessage = error.message;
+  //       console.log(errorCode);
+  //       console.log(errorMessage);
+  //       // ..
+  //     });
+  // };
 
   const signupHandlerWithMongoDb = async (e) => {
     e.preventDefault();
 
     // console.log(email);
-    // console.log(password); 
+    // console.log(password);
     // console.log(userName);
 
     if (
@@ -100,7 +111,6 @@ const navigate = useNavigate()
         const response = await axios.post(`/api/auth/register`, userCredential);
         // console.log(response?.data);
         dispatch(signupSuccess());
-      
 
         if (response.statusText === "OK") {
           toast.success("user signup successfully");
@@ -121,75 +131,76 @@ const navigate = useNavigate()
       dispatch(loginPending());
       const result = await signInWithPopup(auth, provider);
       console.log(result);
-      console.log(result.user.displayName)
-      console.log(result.user.email)
+      console.log(result.user.displayName);
+      console.log(result.user.email);
       const response = await axios.post("/api/auth/google", {
-        
         userName: result.user.displayName,
         email: result.user.email,
         // img : result.user.photoURL,
       });
-      
-      console.log(response)
+
+      console.log(response);
       dispatch(loginSuccess(response.data));
-      navigate('/')
+      navigate("/");
     } catch (error) {
       dispatch(loginFailed());
     }
   };
   return (
     <>
-    <div className="login">
-      <div className="loginWrapper">
-        <div className="loginLeft">
-        <div className="loginLogo">
-            <img src="../../src/assets/BH_Logo_AI-01.png" alt="" />
+      <div className="login">
+        <div className="loginWrapper">
+          <div className="loginLeft">
+            <div className="loginLogo">
+              <img src="../../src/assets/BH_Logo_AI-01.png" alt="" />
+            </div>
           </div>
-        </div>
-        <div className="loginRight">
-          <div className="signupBox">
-            <input
-              placeholder="UserName"
-              type="text"
-              className="loginInput"
-              ref={userName}
-            />
-            <input
-              placeholder="Email Address"
-              type="email"
-              className="loginInput"
-              ref={email}
-            />
-            <input
-              placeholder=" Password"
-              type="password"
-              className="loginInput"
-              ref={password}
-            />
-            <input
-              placeholder="Confirm Password "
-              type="password"
-              className="loginInput"
-              ref={cPassword}
-            />
+          <div className="loginRight">
+            <div className="signupBox">
+              <input
+                placeholder="UserName"
+                type="text"
+                className="loginInput"
+                ref={userName}
+              />
+              <input
+                placeholder="Email Address"
+                type="email"
+                className="loginInput"
+                ref={email}
+              />
+              <input
+                placeholder=" Password"
+                type="password"
+                className="loginInput"
+                ref={password}
+              />
+              <input
+                placeholder="Confirm Password "
+                type="password"
+                className="loginInput"
+                ref={cPassword}
+              />
 
-            
-            <button className="loginButton" onClick={signupHandler}>
-              {" "}
-              Sign Up
-            </button>
-            <Link to={"/login"}>
-            <button className="loginRegisterButton">
-              Login into Account
-            </button>
-            </Link>
+              <button
+                className="loginButton"
+                onClick={signupHandlerWithMongoDb}
+              >
+                {" "}
+                Sign Up
+              </button>
+              <Link to={"/login"}>
+                <button className="loginRegisterButton">
+                  Login into Account
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
+        <ToastContainer />
       </div>
-      <ToastContainer />
-    </div>
 
-    {/* <Footer/> */}
+      {/* <Footer/> */}
     </>
   );
 }
