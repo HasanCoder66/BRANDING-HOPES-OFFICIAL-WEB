@@ -1,45 +1,59 @@
 import "./login.css";
 import { Link } from "react-router-dom";
-import { getAuth,signInWithEmailAndPassword } from "../../firebase/config";
+import { getAuth, signInWithEmailAndPassword } from "../../firebase/config";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  signupFailed,
+  signupPending,
+  signupSuccess,
+  loginFailed,
+  loginSuccess,
+  loginPending,
+} from "../../redux/Slices/authSlices.js";
 
 export default function Login() {
-  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const navigate = useNavigate();
   const auth = getAuth();
   const email = useRef();
   const password = useRef();
-  
-  const loginHandler = () => {
-    console.log("login handler is working");
-    signInWithEmailAndPassword(
-      auth,
-      email?.current?.value,
-      password?.current?.value
-    )
-      .then((userCredential) => {
-        // Signed in
-        console.log('sign in user');
-        const user = userCredential.user;
-        // ...
-        if(user) {
-          toast.success("user Login successfully");
-          setTimeout(() => {
-            navigate("/");
-          }, 5000);
-        }else{
-          toast.failed("user not Login successfully");
-        }
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode)
-        console.log(errorMessage)
-      });
-  };
+
+  // const loginHandler = () => {
+  //   console.log("login handler is working");
+  //   signInWithEmailAndPassword(
+  //     auth,
+  //     email?.current?.value,
+  //     password?.current?.value
+  //   )
+  //     .then((userCredential) => {
+  //       // Signed in
+  //       console.log("sign in user");
+  //       const user = userCredential.user;
+  //       // ...
+  //       if (user) {
+  //         toast.success("user Login successfully");
+  //         setTimeout(() => {
+  //           navigate("/");
+  //         }, 5000);
+  //       } else {
+  //         toast.failed("user not Login successfully");
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       const errorCode = error.code;
+  //       const errorMessage = error.message;
+  //       console.log(errorCode);
+  //       console.log(errorMessage);
+  //     });
+  // };
+
+
+
   const loginHandlerWithMongoDb = async (e) => {
     e.preventDefault();
 
@@ -47,7 +61,6 @@ export default function Login() {
     console.log(password, "=====>>>>> password");
 
     if (email.current.value === "" || password.current.value === "") {
-
       // console.log("Missing fields")
       toast.error("Missing fields", {
         position: "top-center",
@@ -57,7 +70,6 @@ export default function Login() {
         pauseOnHover: true,
         theme: "colored",
       });
-
     } else {
       dispatch(loginPending());
       const userCredential = {
@@ -75,12 +87,12 @@ export default function Login() {
         console.log(response?.data);
         dispatch(loginSuccess(response?.data));
         navigate("/");
-        // dispatch(loginSuccess(response?.data))
-        // toast.success("user Login successfully");
-        // setTimeout(() => {
-          // }, 3000);
-          // if(response){
-          // }
+        dispatch(loginSuccess(response?.data))
+        toast.success("user Login successfully");
+        setTimeout(() => {
+        }, 3000);
+        if(response){
+        }
       } catch (error) {
         if (error) {
           toast.error(error.message);
@@ -106,23 +118,23 @@ export default function Login() {
               type="email"
               className="loginInput"
               ref={email}
-              />
+            />
             <input
               ref={password}
               placeholder=" Password"
               type="password"
               className="loginInput"
             />
-            
-            <button className="loginButton" onClick={loginHandler} >
+
+            <button className="loginButton" onClick={loginHandlerWithMongoDb}>
               {" "}
               Log In
             </button>
             <span className="loginForgot">Forgot Password</span>
             <Link to={"/signup"}>
-            <button className="loginRegisterButton">
-              Create a new Account
-            </button>
+              <button className="loginRegisterButton">
+                Create a new Account
+              </button>
             </Link>
           </div>
         </div>
